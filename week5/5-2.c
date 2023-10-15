@@ -1,0 +1,27 @@
+#include<mega128.h>
+#include <delay.h>
+unsigned char led = 0xFE;
+
+
+void main(void){
+    DDRC = 0xFF;
+    
+    PORTC = led;
+    
+    EIMSK = 0b00010000;
+    EICRB = 0b00000000;
+    
+    SREG = 0x80;
+    
+    while(1);
+    
+}
+
+
+interrupt [EXT_INT4] void external_int4(void){
+    led = led<<1;
+    led = led | 0b00000001;
+    if(led == 0xFF) led = 0xFE;
+    PORTC = led;
+    delay_ms(100);
+}    
