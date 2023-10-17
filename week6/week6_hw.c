@@ -64,7 +64,7 @@ void main(void){
     SREG = 0x80;
     
     while (1){
-        if (min >= 1439) min = 0; // reset minuite
+        if (min >= 1439) min = min - 1439; // reset minuite
         Seg4_out(min);
     }  
 }
