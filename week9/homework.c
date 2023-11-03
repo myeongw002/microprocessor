@@ -137,7 +137,7 @@ void main(void) {
     
     
     //comment 159~165 lines when finding off set values
-    mode = 2 //select display mode
+    mode = 2 //select display mode 0: acc_x, 1: acc_z, 2: angle
     angle = AD_disp(acc_x, acc_z, mode); 
     
     
