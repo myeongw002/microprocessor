@@ -137,7 +137,7 @@ void main(void) {
         while((ADCSRA & 0x10) == 0); // ADIF=1
         acc_z = ADCW ;
         offset_z = offset_z + acc_z;
-        offset_z = offset_z / 10; // offset_z = average of measured acc_z
+        offset_z = (offset_z / 10) + 205 ; // offset_z = average of measured acc_z
     }
 
     Seg4_out(offset_z); //display offset_z for 5 sec
