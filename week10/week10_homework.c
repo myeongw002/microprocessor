@@ -54,8 +54,8 @@ int AD_disp(int acc_x, int acc_y, int acc_z, int mode){
                      
     
     PORTG = 0b00000001;
-    if (mode != 3){
-        if (negative == 1) PORTB = 0x40;
+    if (mode != 3){ 
+        if (negative == 1) PORTB = 0x40; // display '-' if acceleration < 0 
         else PORTB = 0x00;
         PORTD = 0x00; 
         }
@@ -78,15 +78,15 @@ int AD_disp(int acc_x, int acc_y, int acc_z, int mode){
     
     
     PORTG = 0b00000010;
-    if (mode == 3){ // display '-' if angle < 0 
-        if (negative == 1) PORTB = 0x40;
+    if (mode == 3){ //angle mode
+        if (negative == 1) PORTB = 0x40; // display '-' if angle < 0 
         else PORTB = 0x00;
         PORTD = 0x00; 
         delay_ms(1);
     }
      
     else {
-        PORTD = ((seg_pat[N100] & 0x0F) << 4) | (PORTD & 0x0F);
+        PORTD = ((seg_pat[N100] & 0x0F) << 4) | (PORTD & 0x0F); 
         PORTB = (seg_pat[N100] & 0x70) | (PORTB & 0x0F);   
         PORTB = PORTB | 0x80;
     }
@@ -109,23 +109,23 @@ void main(void) {
     offset_y = 0;
     offset_z = 0;
     
+
     for (i = 0; i < 10; i++){
         ADMUX = 0x03; // X(ADC3) single input
         ADCSRA = ADCSRA | 0x40; // ADSC = 1 convert start
         while((ADCSRA & 0x10) == 0); // ADIF=1
         acc_x = ADCW;
-        offset_x = offset_x + acc_x;
-        
+        offset_x = offset_x + acc_x;      
     }
     offset_x = offset_x / 10; // offset_x = average of measured acc_x    
+
 
     for (i = 0; i < 10;i++){
         ADMUX = 0x04; // Y (ADC4) single input
         ADCSRA = ADCSRA | 0x40; // ADSC = 1 convert start
         while((ADCSRA & 0x10) == 0); // ADIF=1
         acc_y = ADCW;
-        offset_y = offset_y + acc_y;
-        
+        offset_y = offset_y + acc_y; 
     }
     offset_y = offset_y / 10; // offset_y = average of measured acc_y
     
@@ -136,10 +136,10 @@ void main(void) {
         while((ADCSRA & 0x10) == 0); // ADIF=1
         acc_z = ADCW ;
         offset_z = offset_z + acc_z;
-        
     }
-    offset_z = (offset_z / 10) - 162 ; // offset_z = average of measured acc_z    
+    offset_z = (offset_z / 10) - 162 ; // offset_z = average of measured acc_z, -162 makes z acceleration 1   
 
+    // set registers after calculating offsets
     TIMSK = 0x01;
     TCCR0 = 0x07;
     TCNT0 = 0x00;
@@ -148,7 +148,9 @@ void main(void) {
     EICRB = 0b10101010;
     SREG = 0x80;
     
+
     dp_mode = 0;
+
     while(1){ 
         angle = AD_disp(acc_x, acc_y, acc_z, dp_mode); 
         if (abs(angle) >= 45) PORTC = 0x00; // turn led on 
